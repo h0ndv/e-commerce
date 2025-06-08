@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -23,7 +25,16 @@ class ServicioResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('nombre')
+                    ->label('Nombre Servicio')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('precio')
+                    ->label('Precio Servicio')
+                    ->required(),
+                Forms\Components\TextInput::make('descripcion')
+                    ->label('Descripcion (opcional)')
+                    ->maxLength(255),
             ]);
     }
 
@@ -31,7 +42,21 @@ class ServicioResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('nombre')->label('Nombre')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('precio')->label('Precio')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('descripcion')->label('Descripcion')
+                    ->searchable()
+                    ->columnSpan('full')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('created_at')->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

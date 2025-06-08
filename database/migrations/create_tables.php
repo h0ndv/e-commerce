@@ -46,27 +46,29 @@ return new class extends Migration {
         // Ordenes de trabajo
         Schema::create('orden_trabajos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('set null');
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->string('titulo');
             $table->text('descripcion')->nullable();
-            $table->enum('estado', ['pendiente', 'en_proceso', 'completado'])->default('pendiente');
+            $table->string('estado')->default('pendiente');
             $table->timestamps();
         });
 
         // Tabla servicios de ordenes de trabajo
         Schema::create('detalle_servicios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('orden_trabajo_id')->constrained('ordenes_trabajo')->onDelete('cascade');
+            $table->foreignId('orden_trabajo_id')->constrained('orden_trabajos')->onDelete('cascade');
             $table->foreignId('servicio_id')->constrained('servicios')->onDelete('cascade');
             $table->integer('cantidad')->default(1);
+            $table->timestamps();
         });
 
         // Tabla detalle productos en la orden de trabajo
         Schema::create('detalle_productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('orden_trabajo_id')->constrained('ordenes_trabajo')->onDelete('cascade');
+            $table->foreignId('orden_trabajo_id')->constrained('orden_trabajos')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->integer('cantidad')->default(1);
+            $table->timestamps();
         });
     }
 

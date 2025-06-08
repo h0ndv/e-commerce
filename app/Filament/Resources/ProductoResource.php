@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -23,7 +25,33 @@ class ProductoResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('nombre')->label('Nombre del Producto')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('categoria_id')->label('Categoria del Producto')
+                    ->relationship('categoria', 'nombre')
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('nombre')->label('Nombre de la Categoria')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('descripcion')->label('Descripcion (opcional)')
+                            ->maxLength(255),
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('precio')->label('Precio del Producto')
+                    ->numeric()
+                    ->prefix('$')
+                    ->maxValue(42949672.95)
+                    ->required(),
+                Forms\Components\TextInput::make('stock')->label('Cantidad en Stock')
+                    ->numeric()
+                    ->maxValue(42949672.95)
+                    ->required(),
+                Forms\Components\TextInput::make('descripcion')->label('Descripcion (opcional)')
+                    ->maxLength(255)
+                    ->columnSpan('full'),
             ]);
     }
 
@@ -31,7 +59,24 @@ class ProductoResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('nombre')->label('Nombre')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('precio')->label('Precio')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('stock')->label('Stock')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('descripcion')->label('Descripcion')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('created_at')->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
